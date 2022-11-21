@@ -1,9 +1,6 @@
 <template>
   <div>
-    <v-row align="center" justify="center" class="mt-1 mb-0">
-      <h3>Map of {{ $props.selectedCategory }} Attractions</h3>
-    </v-row>
-    <div style="height: 85vh">
+    <div style="height: 80vh">
       <div id='myLinePlot' style="height: inherit"></div>
     </div>
   </div>
@@ -97,17 +94,18 @@ export default {
 
       traces.push(trace2)
 
-      const tempType= this.LinePlotData.type
-      const tempX= this.LinePlotData.x
-      const tempY= this.LinePlotData.y
+      let tempType= this.LinePlotData.type
+      let tempX= this.LinePlotData.x
+      let tempY= this.LinePlotData.y
 
       types.forEach(function(t) {
         let xs = [];
         let ys = [];
         tempX.map(function(x,i) {
-          if (tempType[i] === t)
+          if (tempType[i] === t){
             xs.push(tempX[i])
             ys.push(tempY[i])
+          }
         });
         traces.push({
           lon: xs,
@@ -118,7 +116,6 @@ export default {
         })
       })
 
-      console.log(traces)
 
       var layout = {
         mapbox: { style: "carto-positron", center: { lat: 47.374, lon: 8.536 }, zoom: 11 },

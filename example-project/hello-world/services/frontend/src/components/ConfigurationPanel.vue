@@ -34,7 +34,7 @@
 
           </v-card>
         </v-col>
-        <v-col cols="12" md="6" class="map">
+        <v-col cols="12" md="6" class="sideBar">
           <LinePlot :key="linePlotId"
                     :selectedCategory="categories.selectedValue"
                     :selectedBudget="budget.selectedValue"
@@ -119,6 +119,6 @@ export default {
   border-right: 1px solid rgba(0, 0, 0, 0.1);
   background: #fafafa;
   padding-left: 17px;
-  height: calc(100vh - 50px);
+  height: calc(85vh);
 }
 </style>

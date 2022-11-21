@@ -1,7 +1,50 @@
 <template>
   <div>
-    <div style="height: 60vh">
-      <div id='myScatterPlot' style="height: inherit"></div>
+    <div>
+      <h1>
+        Top 10
+      </h1>
+      <div class="pa-2 mb-4">
+      <h3>
+        1. {{ this.ScatterPlotData.name[1] }}
+      </h3>
+
+      <h3>
+        2. {{ this.ScatterPlotData.name[2] }}
+      </h3>
+
+      <h3>
+        3. {{ this.ScatterPlotData.name[3] }}
+      </h3>
+
+        <h4>
+          4. {{ this.ScatterPlotData.name[4] }}
+        </h4>
+        <h4>
+          5. {{ this.ScatterPlotData.name[5] }}
+        </h4>
+        <h5>
+          6. {{ this.ScatterPlotData.name[6] }}
+        </h5>
+        <h5>
+          7. {{ this.ScatterPlotData.name[7] }}
+        </h5>
+        <h5>
+          8. {{ this.ScatterPlotData.name[8] }}
+        </h5>
+        <h5>
+          9. {{ this.ScatterPlotData.name[9] }}
+        </h5>
+
+        <h5>
+          10. {{ this.ScatterPlotData.name[10] }}
+        </h5>
+
+      </div>
+
+    </div>
+    <div style="height: 40vh" >
+      <div id='myScatterPlot' style="height: inherit" class="ma-4"></div>
     </div>
   </div>
 </template>
@@ -42,6 +85,7 @@ export default {
       this.drawScatterPlot()
     },
     drawScatterPlot() {
+      var myPlot = document.getElementById('myScatterPlot')
 
       const airXTemp = this.ScatterPlotData.x
       const airYTemp= this.ScatterPlotData.y
@@ -53,7 +97,7 @@ export default {
       let airname= []
       let airrew= []
       const maxPrice = this.$props.selectedBudget
-      this.$props.selectedBudget=2
+
       const aircost = this.ScatterPlotData.price.filter(function(cost, i){
         if(cost<=maxPrice){
           airX.push(airXTemp[i])
@@ -67,19 +111,18 @@ export default {
 
 
       var trace = {
-        x: aircost,
-        y: airrew,
+        y: aircost,
+        x: this.calulateDistance(airX,airY),
         mode: 'markers',
         type: 'scatter',
         text: airname,
         marker: {
-          color: aircost,
           size: 12,
-          colorscale: 'Jet'
         }
       };
       var data = [trace];
       var layout = {
+        margin: { r: 0, t: 0, b: 0, l: 0 },
         xaxis: {
           title: 'price',
           titlefont: {
@@ -88,7 +131,7 @@ export default {
           },
         },
         yaxis: {
-          title: 'number_of_reviews',
+          title: 'distance',
           titlefont: {
             size: 12,
             color: 'grey'
@@ -97,6 +140,22 @@ export default {
       }
       var config = {responsive: true, displayModeBar: false}
       Plotly.newPlot('myScatterPlot', data, layout, config);
+
+      myPlot.on('plotly_click', function(data){
+        var pts = '';
+        for(var i=0; i < data.points.length; i++){
+          pts = 'x = '+data.points[i].x +'\ny = '+
+              data.points[i].y.toPrecision(4) + '\n\n';
+        }
+        alert('Closest point clicked:\n\n'+pts);
+      });
+
+    },
+    calulateDistance(x,y){
+      let result = []
+
+      x.forEach(function(x,i){result.push(Math.sqrt(Math.pow(x - 8.536477780554755,2)+Math.pow(y[i]-47.374806473560426,2)))})
+      return result
     }
   }
 }
