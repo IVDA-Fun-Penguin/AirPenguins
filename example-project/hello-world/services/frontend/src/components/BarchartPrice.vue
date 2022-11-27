@@ -55,7 +55,7 @@ export default {
 
       let result = []
       temp.map(function (x){ result.push(x.length)})
-      
+
       var data = [
         {
           y: result,
