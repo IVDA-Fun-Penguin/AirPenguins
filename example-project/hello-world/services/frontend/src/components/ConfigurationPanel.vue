@@ -20,24 +20,27 @@
                 ></v-select>
               </v-col>
             </v-row>
+
             <v-row>
               <v-col cols="12" sm="12">
-                <v-select
-                    :items="budget.values"
-                    label="Select a max budget"
-                    dense
-                    v-model="budget.selectedValue"
-                    @change="changeCategory"
-                ></v-select>
+                <Multiselect @messageFromChild="captureMyMessage"/>
               </v-col>
             </v-row>
 
+            <v-row>
+              <v-col cols="12" sm="12">
+                <!--
+                <HistogramSlider/>
+                -->
+              </v-col>
+            </v-row>
           </v-card>
         </v-col>
         <v-col cols="12" md="6" class="sideBar">
           <LinePlot :key="linePlotId"
                     :selectedCategory="categories.selectedValue"
                     :selectedBudget="budget.selectedValue"
+                    :selected="selected"
           />
         </v-col>
 
@@ -57,12 +60,15 @@
 <script>
 import ScatterPlot from './ScatterPlot';
 import LinePlot from './LinePlot';
+import Multiselect from './Multiselect';
+//import HistogramSlider from './HistogramSlider';
 
 export default {
-  components: {LinePlot, ScatterPlot},
+  components: {LinePlot, ScatterPlot, Multiselect },
   data: () => ({
     scatterPlotId: 0,
     linePlotId: 0,
+    selected: [],
     categories: {
       values: ['All',
         'ArtGallery',
@@ -99,10 +105,16 @@ export default {
     changeCategory() {
       this.scatterPlotId += 1
       this.linePlotId += 1
+    },
+    captureMyMessage(msg){
+      this.selected=msg
+      this.linePlotId += 1
+      console.log(msg)
     }
   }
 }
 </script>
+
 
 <style scoped>
 .control-panel-font {

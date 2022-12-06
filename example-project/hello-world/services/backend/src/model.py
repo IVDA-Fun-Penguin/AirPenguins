@@ -1,6 +1,7 @@
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 
+
 class Attraction(BaseModel):
     type: str
     name: str

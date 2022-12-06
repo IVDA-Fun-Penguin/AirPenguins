@@ -66,9 +66,15 @@ export default {
       ];
       var layout = {
         margin: { r: 0, t: 0, b: 0, l: 0 },
-
+        xaxis: {
+          rangeslider: {}
+        },
+        yaxis: {
+          fixedrange: true
+        }
       }
       var config = {responsive: true, displayModeBar: false}
+
       Plotly.newPlot('myBarChartPrice', data, layout, config);
     }
   }

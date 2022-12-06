@@ -13,11 +13,13 @@ export default {
   name: "LinePlot",
   props: [
     "selectedCategory",
-    "selectedBudget"
+    "selectedBudget",
+    "selected"
   ],
   data: () => ({
-    LinePlotData: {x: [], y: [], type: []},
-    AirbnbData: {x: [], y: [], name: [], cost: []}
+    LinePlotData: {x: [], y: [], type: [], name: []},
+    AirbnbData: {x: [], y: [], name: [], cost: []},
+    MiddlePoint: {x: 0, y: 0}
   }),
   mounted() {
     this.fetchData()
@@ -35,6 +37,7 @@ export default {
         this.LinePlotData.x.push(attr.longitude)
         this.LinePlotData.y.push(attr.latitude)
         this.LinePlotData.type.push(attr.type)
+        this.LinePlotData.name.push(attr.name)
       })
 
       var reqUrl2 = 'http://127.0.0.1:5000/airbnbs'
@@ -51,14 +54,25 @@ export default {
 
       })
       // draw the lineplot after the data is transformed
+      this.calculateMiddlePoint()
       this.drawLinePlot()
+    },
+    calculateMiddlePoint(){
+
+      let resultx = 0
+      let resulty = 0
+
+      this.LinePlotData.x.map(x=>resultx+=x)
+      this.LinePlotData.y.map(y=>resulty+=y)
+
+      this.MiddlePoint.x = resultx/this.LinePlotData.x.length
+      this.MiddlePoint.y = resulty/this.LinePlotData.y.length
     },
     drawLinePlot() {
 
+      let traces = []
+
       const types = new Set(this.LinePlotData.type)
-
-
-
       const airXTemp = this.AirbnbData.x
       const airYTemp= this.AirbnbData.y
       const airnameTemp = this.AirbnbData.name
@@ -86,36 +100,49 @@ export default {
         text: airname,
         type: 'scattermapbox',
 
-        marker: { color: this.calulateDistance(airX,airY), size: 5, colorscale: 'Jet' }
+        marker: { color: this.calulateDistance(airX,airY), size: 5 }
       }
-
-      let traces = []
-
-
       traces.push(trace2)
+
+      var traceMiddlePoint = {
+
+        name: "MiddlePoint",
+        lon: [this.MiddlePoint.x],
+        lat: [this.MiddlePoint.y],
+        type: 'scattermapbox',
+
+        marker: { color: "rgba(17,255,0,0.37)", size: 100 }
+      }
+      traces.push(traceMiddlePoint)
 
       let tempType= this.LinePlotData.type
       let tempX= this.LinePlotData.x
       let tempY= this.LinePlotData.y
-
+      let tempName= this.LinePlotData.name
+      let selected = this.$props.selected
+      let self = this
       types.forEach(function(t) {
         let xs = [];
         let ys = [];
+        let name = []
         tempX.map(function(x,i) {
           if (tempType[i] === t){
             xs.push(tempX[i])
             ys.push(tempY[i])
+            name.push(tempName[i])
           }
         });
+
         traces.push({
+
           lon: xs,
           lat: ys,
           name: t,
           type: 'scattermapbox',
-          marker: { size: 10 }
+          marker: { size: 10, color: selected===[]?"#727272":self.checkIfIn(name, selected) }
+
         })
       })
-
 
       var layout = {
         mapbox: { style: "carto-positron", center: { lat: 47.374, lon: 8.536 }, zoom: 11 },
@@ -124,13 +151,36 @@ export default {
       var config = {responsive: true, displayModeBar: false}
       Plotly.newPlot('myLinePlot', traces, layout, config);
     },
+    checkIfIn(name, list){
+      let res=[]
+      name.forEach(function(x){
+        if( list.includes(x)){
+          res.push("#ffcc00")
+        }
+        else{
+          res.push("#727272")
+        }
 
+      })
+      return res
+    },
+    compareNumbers(a, b) {
+      return a-b;
+    },
     calulateDistance(x,y){
       let result = []
 
-      x.forEach(function(x,i){result.push(-Math.sqrt(Math.pow(x - 8.536477780554755,2)+Math.pow(y[i]-47.374806473560426,2)))})
+      const tempX = this.MiddlePoint.x
+      const tempY = this.MiddlePoint.y
+      x.forEach(function(x,i){result.push(Math.sqrt(Math.pow(x - tempX,2)+Math.pow(y[i]-tempY,2)))})
+
+      const filter = 100
+      const temp = [...result]
+      const flag = temp.sort(this.compareNumbers)[filter]
+      result = result.map(function(x){return x<=flag ? "#ff0000" : "#727272" })
       return result
     }
+
   }
 }
 </script>
