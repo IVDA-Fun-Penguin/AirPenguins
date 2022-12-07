@@ -61,12 +61,28 @@ export default {
 
       let resultx = 0
       let resulty = 0
+      if(this.$props.selected!==[]){
+        let tempX=this.LinePlotData.x
+        let tempY=this.LinePlotData.y
+        let tempName = this.LinePlotData.name
+        let tempInc = this.$props.selected
+        tempName.forEach(function (x,i){
+          if(tempInc.includes(x)){
+            resultx+=tempX[i]
+            resulty+=tempY[i]
+          }
 
-      this.LinePlotData.x.map(x=>resultx+=x)
-      this.LinePlotData.y.map(y=>resulty+=y)
+        })
+        this.MiddlePoint.x = resultx/this.$props.selected.length
+        this.MiddlePoint.y = resulty/this.$props.selected.length
+      }
+      else{
+        this.LinePlotData.x.map(x=>resultx+=x)
+        this.LinePlotData.y.map(y=>resulty+=y)
 
-      this.MiddlePoint.x = resultx/this.LinePlotData.x.length
-      this.MiddlePoint.y = resulty/this.LinePlotData.y.length
+        this.MiddlePoint.x = resultx/this.LinePlotData.x.length
+        this.MiddlePoint.y = resulty/this.LinePlotData.y.length
+      }
     },
     drawLinePlot() {
 
@@ -174,10 +190,10 @@ export default {
       const tempY = this.MiddlePoint.y
       x.forEach(function(x,i){result.push(Math.sqrt(Math.pow(x - tempX,2)+Math.pow(y[i]-tempY,2)))})
 
-      const filter = 100
+      const filter = 10
       const temp = [...result]
       const flag = temp.sort(this.compareNumbers)[filter]
-      result = result.map(function(x){return x<=flag ? "#ff0000" : "#727272" })
+      result = result.map(function(x){return x<=flag ? "#ff0000" : "rgba(114,114,114,0.25)" })
       return result
     }
 
