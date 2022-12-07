@@ -145,7 +145,7 @@ export default {
         margin: { r: 0, t: 0, b: 0, l: 0 },
       };
       var config = { responsive: true, displayModeBar: false };
-      Plotly.newPlot("myGeoplot", traces, layout, config);
+      Plotly.newPlot("myGeoPlot", traces, layout, config);
     },
     checkIfIn(name, list) {
       let res = [];
