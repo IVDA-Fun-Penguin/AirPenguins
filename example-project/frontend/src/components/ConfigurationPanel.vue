@@ -38,7 +38,7 @@
         </v-col>
         <v-col cols="12" md="6" class="sideBar">
           <GeoPlot
-            :key="linePlotId"
+            :key="geoPlotId"
             :selectedCategory="categories.selectedValue"
             :selectedBudget="budget.selectedValue"
             :selected="selected"
@@ -69,7 +69,7 @@ export default {
   components: { GeoPlot, ScatterPlot, Multiselect },
   data: () => ({
     scatterPlotId: 0,
-    linePlotId: 0,
+    geoPlotId: 0,
     selected: [],
     categories: {
       values: [
@@ -98,11 +98,11 @@ export default {
   methods: {
     changeCategory() {
       this.scatterPlotId += 1;
-      this.linePlotId += 1;
+      this.geoPlotId += 1;
     },
     captureMyMessage(msg) {
       this.selected = msg;
-      this.linePlotId += 1;
+      this.geoPlotId += 1;
       console.log(msg);
     },
   },
