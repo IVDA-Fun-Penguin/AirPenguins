@@ -15,9 +15,11 @@ export default {
     GeoPlotData: { x: [], y: [], type: [], name: [] },
     AirbnbData: { x: [], y: [], name: [], cost: [] },
     MiddlePoint: { x: 0, y: 0 },
+    TopAirBnbs: { name: [] },
   }),
   mounted() {
     this.fetchData();
+    this.passEventToParent();
   },
   methods: {
     async fetchData() {
@@ -51,6 +53,7 @@ export default {
       });
       // draw the Geoplot after the data is transformed
       this.calculateMiddlePoint();
+      this.calculateTops();
       this.drawGeoPlot();
     },
     calculateMiddlePoint() {
@@ -82,6 +85,8 @@ export default {
           airX.push(airXTemp[i]);
           airY.push(airYTemp[i]);
           airname.push(airnameTemp[i]);
+
+          this.TopAirBnbs.name.push(airnameTemp[i]);
         }
       });
 
@@ -179,6 +184,10 @@ export default {
         return x <= flag ? "#ff0000" : "#727272";
       });
       return result;
+    },
+
+    passEventToParent() {
+      this.$emit("setTop10", this.TopAirBnbs);
     },
   },
 };

@@ -2,8 +2,8 @@
   <div>
     <h1>Top 10</h1>
     <ol>
-      <li v-for="item in items" :key="item.id">
-        {{ item.message }}
+      <li v-for="airbnb in selectedAirbnbs" :key="airbnb.id">
+        {{ airbnb.name }}
       </li>
     </ol>
   </div>
@@ -11,11 +11,9 @@
 <script>
 export default {
   name: "RankingView",
+  props: ["selectedAirbnbs"],
   data() {
-    return {
-      parentMessage: "Parent",
-      items: [{ message: "Foo" }, { message: "Bar" }],
-    };
+    return {};
   },
 };
 </script>

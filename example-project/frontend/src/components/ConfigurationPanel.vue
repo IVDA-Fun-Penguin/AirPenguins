@@ -38,6 +38,7 @@
         </v-col>
         <v-col cols="12" md="6" class="sideBar">
           <GeoPlot
+            @setTop10="setTopAirbnbs($event)"
             :key="geoPlotId"
             :selectedCategory="categories.selectedValue"
             :selectedBudget="budget.selectedValue"
@@ -47,7 +48,7 @@
 
         <v-col cols="12" md="4" class="sideBar">
           <v-col cols="12" sm="12" class="scatter">
-            <v-row><RankingView /></v-row>
+            <v-row><RankingView :selectedAirbnbs="topairbnbs" /></v-row>
             <v-row>
               <ScatterPlot
                 :key="scatterPlotId"
@@ -93,6 +94,7 @@ export default {
         "None",
       ],
       selectedValue: "None",
+      topairbnbs: [],
     },
     budget: {
       values: [25, 50, 75, 100, 250, 500, 750, 1000, 1500],
@@ -100,6 +102,9 @@ export default {
     },
   }),
   methods: {
+    setTopAirbnbs(topairbnbs) {
+      this.topairbnbs = topairbnbs;
+    },
     changeCategory() {
       this.scatterPlotId += 1;
       this.geoPlotId += 1;
