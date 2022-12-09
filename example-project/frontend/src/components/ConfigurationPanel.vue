@@ -47,11 +47,14 @@
 
         <v-col cols="12" md="4" class="sideBar">
           <v-col cols="12" sm="12" class="scatter">
-            <ScatterPlot
-              :key="scatterPlotId"
-              :selectedCategory="categories.selectedValue"
-              :selectedBudget="budget.selectedValue"
-            />
+            <v-row><RankingView /></v-row>
+            <v-row>
+              <ScatterPlot
+                :key="scatterPlotId"
+                :selectedCategory="categories.selectedValue"
+                :selectedBudget="budget.selectedValue"
+              />
+            </v-row>
           </v-col>
         </v-col>
       </v-row>
@@ -63,10 +66,11 @@
 import ScatterPlot from "./ScatterPlot";
 import GeoPlot from "./GeoPlot";
 import Multiselect from "./Multiselect";
+import RankingView from "./RankingView.vue";
 //import HistogramSlider from './HistogramSlider';
 
 export default {
-  components: { GeoPlot, ScatterPlot, Multiselect },
+  components: { GeoPlot, ScatterPlot, Multiselect, RankingView },
   data: () => ({
     scatterPlotId: 0,
     geoPlotId: 0,
