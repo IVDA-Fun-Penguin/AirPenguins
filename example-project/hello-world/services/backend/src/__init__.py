@@ -38,5 +38,6 @@ class Airbnbs(Resource):
         cursor = airbnbs.find()
         return [Airbnb(**doc).to_json() for doc in cursor]
 
+
 api.add_resource(Attractions, '/attractions')
 api.add_resource(Airbnbs, '/airbnbs')

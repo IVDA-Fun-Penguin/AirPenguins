@@ -1,6 +1,6 @@
 <template>
   <div>
-    <treeselect v-model="value" :multiple="true" :options="options" :value-consists-of="valueConsistsOf" @close="sendMessageToParent" />
+    <treeselect v-model="value" :multiple="true" :options="options"  @close="sendMessageToParent" />
 
   </div>
 </template>
@@ -20,7 +20,7 @@ export default {
       // define the default value
       value: null,
       // define options
-      valueConsistsOf: 'LEAF_PRIORITY',
+      //valueConsistsOf: 'LEAF_PRIORITY',
       options: [],
       Attractions: {type: [], name: []},
     }

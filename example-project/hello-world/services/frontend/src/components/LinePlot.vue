@@ -61,28 +61,54 @@ export default {
 
       let resultx = 0
       let resulty = 0
-      if(this.$props.selected!==[]){
-        let tempX=this.LinePlotData.x
-        let tempY=this.LinePlotData.y
-        let tempName = this.LinePlotData.name
-        let tempInc = this.$props.selected
+      let tempX=this.LinePlotData.x
+      let tempY=this.LinePlotData.y
+      let tempName = this.LinePlotData.name
+      let tempType = this.LinePlotData.type
+      const types = new Set(this.LinePlotData.type)
+
+      let tempInc = this.$props.selected
+
+      let denominator = 0
+
+      if(this.$props.selected.length!==0){
+
+        // calculate for each explicit attraction
         tempName.forEach(function (x,i){
           if(tempInc.includes(x)){
             resultx+=tempX[i]
             resulty+=tempY[i]
+            denominator += 1
           }
+        })
+
+        // calculate for each category of attraction
+        tempInc.forEach(function (x){
+          if(types.has(x)){
+            tempX.forEach(function (_,i){
+            if(tempType[i]===x){
+              resultx+=tempX[i]
+              resulty+=tempY[i]
+              denominator += 1
+            }
+          })}
 
         })
-        this.MiddlePoint.x = resultx/this.$props.selected.length
-        this.MiddlePoint.y = resulty/this.$props.selected.length
+
+        this.MiddlePoint.x = resultx/denominator
+        this.MiddlePoint.y = resulty/denominator
       }
       else{
+
+        // calculate for all attractions when none of them are selected
         this.LinePlotData.x.map(x=>resultx+=x)
         this.LinePlotData.y.map(y=>resulty+=y)
 
         this.MiddlePoint.x = resultx/this.LinePlotData.x.length
         this.MiddlePoint.y = resulty/this.LinePlotData.y.length
       }
+
+      console.log( this.$props.selected)
     },
     drawLinePlot() {
 
@@ -127,7 +153,7 @@ export default {
         lat: [this.MiddlePoint.y],
         type: 'scattermapbox',
 
-        marker: { color: "rgba(17,255,0,0.37)", size: 100 }
+        marker: { color: "rgb(15,255,0)", size: 5 }
       }
       traces.push(traceMiddlePoint)
 
@@ -137,12 +163,12 @@ export default {
       let tempName= this.LinePlotData.name
       let selected = this.$props.selected
       let self = this
-      types.forEach(function(t) {
+      types.forEach(function(category) {
         let xs = [];
         let ys = [];
         let name = []
         tempX.map(function(x,i) {
-          if (tempType[i] === t){
+          if (tempType[i] === category){
             xs.push(tempX[i])
             ys.push(tempY[i])
             name.push(tempName[i])
@@ -153,9 +179,9 @@ export default {
 
           lon: xs,
           lat: ys,
-          name: t,
+          name: category,
           type: 'scattermapbox',
-          marker: { size: 10, color: selected===[]?"#727272":self.checkIfIn(name, selected) }
+          marker: { size: 10, color: selected===[]?"rgba(114,114,114,0.42)":self.checkIfIn(name, selected,category) }
 
         })
       })
@@ -167,17 +193,20 @@ export default {
       var config = {responsive: true, displayModeBar: false}
       Plotly.newPlot('myLinePlot', traces, layout, config);
     },
-    checkIfIn(name, list){
+    checkIfIn(name, list, category){
       let res=[]
+      if (list.includes(category)){
+      res = Array(name.length).fill("#ffcc00")
+      }else{
       name.forEach(function(x){
         if( list.includes(x)){
           res.push("#ffcc00")
         }
         else{
-          res.push("#727272")
+          res.push("rgba(114,114,114,0.42)")
         }
 
-      })
+      })}
       return res
     },
     compareNumbers(a, b) {
