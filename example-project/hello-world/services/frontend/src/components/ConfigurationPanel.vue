@@ -42,17 +42,15 @@
             :selectedCategory="categories.selectedValue"
             :selectedBudget="budget.selectedValue"
             :selected="selected"
+            @passTopNames="setTopNames($event)"
           />
         </v-col>
 
         <v-col cols="12" md="4" class="sideBar">
           <v-col cols="12" sm="12" class="scatter">
-            <v-row
-              ><RankingView
-                :key="rankingViewId"
-                :topAirbnbs="topAirbnbs"
-                @passTopToParents="setTopAirbnbs($event)"
-            /></v-row>
+            <v-row>
+              <RankingView :key="rankingViewId" :topAirbnbs="topAirbnbNames" />
+            </v-row>
             <v-row>
               <ScatterPlot
                 :key="scatterPlotId"
@@ -107,10 +105,10 @@ export default {
     },
   }),
   methods: {
-    setTopAirbnbs(topAirbnbs) {
+    setTopNames(topAirbnbs) {
       this.topAirbnbNames = topAirbnbs;
       console.log("nextline is passed data");
-      console.log(topAirbnbs);
+      console.log(this.topAirbnbNames);
     },
     changeCategory() {
       this.scatterPlotId += 1;
@@ -120,7 +118,7 @@ export default {
     captureMyMessage(msg) {
       this.selected = msg;
       this.linePlotId += 1;
-      console.log(msg);
+      //console.log(msg);
     },
   },
 };

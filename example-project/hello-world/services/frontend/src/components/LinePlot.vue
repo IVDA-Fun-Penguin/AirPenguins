@@ -12,7 +12,7 @@ export default {
   name: "LinePlot",
   props: ["selectedCategory", "selectedBudget", "selected"],
   data: () => ({
-    TopAirbnbNames: {},
+    TopAirbnbNames: [],
     AttractionData: { x: [], y: [], type: [], name: [] },
     AirbnbData: { x: [], y: [], name: [], cost: [], color: [], rank: [] },
     MiddlePoint: { x: 0, y: 0 },
@@ -102,7 +102,7 @@ export default {
         this.MiddlePoint.y = resulty / this.AttractionData.y.length;
       }
 
-      console.log(this.$props.selected);
+      //console.log(this.$props.selected);
     },
     drawLinePlot() {
       let traces = [];
@@ -255,7 +255,7 @@ export default {
         }
       });
       this.TopAirbnbNames = topNames;
-      this.$emit("passTopToParents", this.TopAirbnbNames);
+      this.$emit("passTopNames", this.TopAirbnbNames);
     },
   },
 };

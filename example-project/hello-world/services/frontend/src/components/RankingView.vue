@@ -1,15 +1,20 @@
 <template>
-  <div>
-    <ol>
-      <li v-for="airbnb in this.$props.topAirbnbs" :key="airbnb.id">
-        name:{{ airbnb }}
-      </li>
-    </ol>
+  <div class="rankingPanel">
+    <div class="rankingTitle">
+      <span>
+        <h3>Recommended Airbnbs</h3>
+      </span>
+    </div>
+    <div v-for="airbnb in this.$props.topAirbnbs" :key="airbnb">
+      <AirbnbRow :airbnbNames="airbnb" />
+    </div>
   </div>
 </template>
 
 <script>
+import AirbnbRow from "./AirbnbRow.vue";
 export default {
+  components: { AirbnbRow },
   name: "RankingView",
   props: ["topAirbnbs"],
 
@@ -18,3 +23,17 @@ export default {
   methods: {},
 };
 </script>
+<style>
+.rankingPanel {
+  width: 90%;
+  margin-left: 10px;
+  justify-content: center;
+}
+.rankingTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px;
+  padding: 3px 5px;
+}
+</style>
