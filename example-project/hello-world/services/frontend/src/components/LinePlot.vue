@@ -14,7 +14,10 @@ export default {
   props: [
     "selectedCategory",
     "selectedBudget",
-    "selected"
+    "selected",
+    "priceRange",
+    "reviewRange",
+    "nightRange"
   ],
   data: () => ({
     AttractionData: {x: [], y: [], type: [], name: []},
@@ -40,6 +43,9 @@ export default {
         this.AttractionData.name.push(attr.name)
       })
 
+      const tempRangePrice = this.$props.priceRange
+      const tempRangeReview = this.$props.reviewRange
+      const tempRangeNight = this.$props.nightRange
       var reqUrl2 = 'http://127.0.0.1:5000/airbnbs'
       console.log("ReqURL " + reqUrl2)
       // await response and data
@@ -47,12 +53,19 @@ export default {
       const responseData2 = await response2.json();
       // transform data to usable by lineplot
       responseData2.forEach((attr) => {
-        this.AirbnbData.x.push(attr.longitude)
-        this.AirbnbData.y.push(attr.latitude)
-        this.AirbnbData.name.push(attr.name)
-        this.AirbnbData.cost.push(attr.price)
 
+        if(attr.minimum_nights>=tempRangeNight[0] && attr.minimum_nights<=tempRangeNight[1]){
+          if(attr.number_of_reviews>=tempRangeReview[0] && attr.number_of_reviews<=tempRangeReview[1]){
+            if(attr.price>=tempRangePrice[0] && attr.price<=tempRangePrice[1]){
+              this.AirbnbData.x.push(attr.longitude)
+              this.AirbnbData.y.push(attr.latitude)
+              this.AirbnbData.name.push(attr.name)
+              this.AirbnbData.cost.push(attr.price)
+            }
+          }
+      }
       })
+
       // draw the lineplot after the data is transformed
       this.calculateMiddlePoint()
       this.drawLinePlot()
@@ -234,7 +247,7 @@ export default {
       const temp = [...result]
       const flag = temp.sort(this.compareNumbers)[filter]
 
-      let t = [...result]
+      let t = result
       this.AirbnbData.rank = this.rankings(t)
 
       result = result.map(function(x){return x<=flag ? "#ff0000" : "rgba(114,114,114,0.25)" })

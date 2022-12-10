@@ -1,5 +1,44 @@
 <template>
   <div>
+    <div>
+      <v-card>
+        <v-container fluid>
+
+          <v-row align="center">
+
+            <v-col md="2">
+              <v-row>
+                <v-col md="12">
+                  <v-row align="center">
+                    <v-col><img src="../assets/pengu.png" style="height: 100px"></v-col>
+                    <v-col>
+                      <h1>AirPenguins</h1>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-col>
+
+
+
+            <v-col md="3" class="slider">
+              Price:
+              <RangeSliderPrice @messageFromPrice="captureMyPrice"/>
+            </v-col>
+            <v-col md="3" class="slider">
+              Review:
+              <RangeSliderReview @messageFromReview="captureMyReview"/>
+            </v-col>
+            <v-col md="3" class="slider">
+              Min Nights:
+              <RangeSliderNight @messageFromNight="captureMyNight"/>
+            </v-col>
+
+          </v-row>
+
+        </v-container>
+      </v-card>
+    </div>
     <v-container fluid>
       <v-row>
         <v-col cols="12" md="2" class="sideBar">
@@ -27,13 +66,6 @@
               </v-col>
             </v-row>
 
-            <v-row>
-              <v-col cols="12" sm="12">
-                <!--
-                <HistogramSlider/>
-                -->
-              </v-col>
-            </v-row>
           </v-card>
         </v-col>
         <v-col cols="12" md="6" class="sideBar">
@@ -41,6 +73,9 @@
                     :selectedCategory="categories.selectedValue"
                     :selectedBudget="budget.selectedValue"
                     :selected="selected"
+                    :priceRange="priceRange"
+                    :reviewRange="reviewRange"
+                    :nightRange="nightRange"
           />
         </v-col>
 
@@ -61,14 +96,20 @@
 import ScatterPlot from './ScatterPlot';
 import LinePlot from './LinePlot';
 import Multiselect from './Multiselect';
-//import HistogramSlider from './HistogramSlider';
+import RangeSliderPrice from './RangeSliderPrice';
+import RangeSliderReview from './RangeSliderReview';
+
+import RangeSliderNight from './RangeSliderNight';
 
 export default {
-  components: {LinePlot, ScatterPlot, Multiselect },
+  components: {LinePlot, ScatterPlot, Multiselect,RangeSliderPrice,RangeSliderReview, RangeSliderNight },
   data: () => ({
     scatterPlotId: 0,
     linePlotId: 0,
     selected: [],
+    priceRange:[0,1430],
+    reviewRange:[0,930],
+    nightRange:[0,360],
     categories: {
       values: ['All',
         'ArtGallery',
@@ -108,7 +149,22 @@ export default {
     },
     captureMyMessage(msg){
       this.selected=msg
-      this.linePlotId += 1
+      this.changeCategory()
+      console.log(msg)
+    },
+    captureMyPrice(msg){
+      this.priceRange=msg
+      this.changeCategory()
+      console.log(msg)
+    },
+    captureMyReview(msg){
+      this.reviewRange=msg
+      this.changeCategory()
+      console.log(msg)
+    },
+    captureMyNight(msg){
+      this.nightRange=msg
+      this.changeCategory()
       console.log(msg)
     }
   }
