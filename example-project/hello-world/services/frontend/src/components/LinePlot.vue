@@ -17,8 +17,8 @@ export default {
     "selected"
   ],
   data: () => ({
-    LinePlotData: {x: [], y: [], type: [], name: []},
-    AirbnbData: {x: [], y: [], name: [], cost: []},
+    AttractionData: {x: [], y: [], type: [], name: []},
+    AirbnbData: {x: [], y: [], name: [], cost: [], color:[], rank:[]},
     MiddlePoint: {x: 0, y: 0}
   }),
   mounted() {
@@ -34,10 +34,10 @@ export default {
       const responseData = await response.json();
       // transform data to usable by lineplot
       responseData.forEach((attr) => {
-        this.LinePlotData.x.push(attr.longitude)
-        this.LinePlotData.y.push(attr.latitude)
-        this.LinePlotData.type.push(attr.type)
-        this.LinePlotData.name.push(attr.name)
+        this.AttractionData.x.push(attr.longitude)
+        this.AttractionData.y.push(attr.latitude)
+        this.AttractionData.type.push(attr.type)
+        this.AttractionData.name.push(attr.name)
       })
 
       var reqUrl2 = 'http://127.0.0.1:5000/airbnbs'
@@ -61,15 +61,15 @@ export default {
 
       let resultx = 0
       let resulty = 0
-      let tempX=this.LinePlotData.x
-      let tempY=this.LinePlotData.y
-      let tempName = this.LinePlotData.name
-      let tempType = this.LinePlotData.type
-      const types = new Set(this.LinePlotData.type)
+      let tempX=this.AttractionData.x
+      let tempY=this.AttractionData.y
+      let tempName = this.AttractionData.name
+      let tempType = this.AttractionData.type
+      const types = new Set(this.AttractionData.type)
 
       let tempInc = this.$props.selected
 
-      let denominator = 0
+      let numberOfAttractionSelected = 0
 
       if(this.$props.selected.length!==0){
 
@@ -78,7 +78,7 @@ export default {
           if(tempInc.includes(x)){
             resultx+=tempX[i]
             resulty+=tempY[i]
-            denominator += 1
+            numberOfAttractionSelected += 1
           }
         })
 
@@ -89,23 +89,23 @@ export default {
             if(tempType[i]===x){
               resultx+=tempX[i]
               resulty+=tempY[i]
-              denominator += 1
+              numberOfAttractionSelected += 1
             }
           })}
 
         })
 
-        this.MiddlePoint.x = resultx/denominator
-        this.MiddlePoint.y = resulty/denominator
+        this.MiddlePoint.x = resultx/numberOfAttractionSelected
+        this.MiddlePoint.y = resulty/numberOfAttractionSelected
       }
       else{
 
         // calculate for all attractions when none of them are selected
-        this.LinePlotData.x.map(x=>resultx+=x)
-        this.LinePlotData.y.map(y=>resulty+=y)
+        this.AttractionData.x.map(x=>resultx+=x)
+        this.AttractionData.y.map(y=>resulty+=y)
 
-        this.MiddlePoint.x = resultx/this.LinePlotData.x.length
-        this.MiddlePoint.y = resulty/this.LinePlotData.y.length
+        this.MiddlePoint.x = resultx/this.AttractionData.x.length
+        this.MiddlePoint.y = resulty/this.AttractionData.y.length
       }
 
       console.log( this.$props.selected)
@@ -114,7 +114,7 @@ export default {
 
       let traces = []
 
-      const types = new Set(this.LinePlotData.type)
+      const types = new Set(this.AttractionData.type)
       const airXTemp = this.AirbnbData.x
       const airYTemp= this.AirbnbData.y
       const airnameTemp = this.AirbnbData.name
@@ -135,6 +135,8 @@ export default {
       })
 
 
+
+
       var trace2 = {
         name: "Airbnbs",
         lon: airX,
@@ -144,6 +146,7 @@ export default {
 
         marker: { color: this.calulateDistance(airX,airY), size: 5 }
       }
+
       traces.push(trace2)
 
       var traceMiddlePoint = {
@@ -157,10 +160,10 @@ export default {
       }
       traces.push(traceMiddlePoint)
 
-      let tempType= this.LinePlotData.type
-      let tempX= this.LinePlotData.x
-      let tempY= this.LinePlotData.y
-      let tempName= this.LinePlotData.name
+      let tempType= this.AttractionData.type
+      let tempX= this.AttractionData.x
+      let tempY= this.AttractionData.y
+      let tempName= this.AttractionData.name
       let selected = this.$props.selected
       let self = this
       types.forEach(function(category) {
@@ -212,17 +215,32 @@ export default {
     compareNumbers(a, b) {
       return a-b;
     },
-    calulateDistance(x,y){
+    rankings(arr) {
+      const sorted = [...arr].sort((a, b) => a - b);
+      return arr.map((x) => sorted.indexOf(x) + 1);
+    },
+    calulateDistance(AirbnbLat,AirbnbLong){
+
       let result = []
 
       const tempX = this.MiddlePoint.x
       const tempY = this.MiddlePoint.y
-      x.forEach(function(x,i){result.push(Math.sqrt(Math.pow(x - tempX,2)+Math.pow(y[i]-tempY,2)))})
+
+      AirbnbLat.forEach(function(_,i){
+        result.push(Math.sqrt(Math.pow(AirbnbLat[i] - tempX,2)+Math.pow(AirbnbLong[i]-tempY,2)))
+      })
 
       const filter = 10
       const temp = [...result]
       const flag = temp.sort(this.compareNumbers)[filter]
+
+      let t = [...result]
+      this.AirbnbData.rank = this.rankings(t)
+
       result = result.map(function(x){return x<=flag ? "#ff0000" : "rgba(114,114,114,0.25)" })
+
+      this.AirbnbData.color = result
+      console.log(this.AirbnbData.rank)
       return result
     }
 
