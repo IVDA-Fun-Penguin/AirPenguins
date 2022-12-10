@@ -35,7 +35,12 @@ class Attractions(Resource):
 class Airbnbs(Resource):
     def get(self, args=None):
         args = request.args.to_dict()
-        cursor = airbnbs.find()
+        if args['room_type'] == 'All':
+            cursor = airbnbs.find()
+            # In any other case, we only return the companies where the category applies
+        else:
+            cursor = airbnbs.find(args)
+
         return [Airbnb(**doc).to_json() for doc in cursor]
 
 

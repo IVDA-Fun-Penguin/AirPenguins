@@ -47,6 +47,9 @@
 <script>
 export default {
   name: "RangeSliderReview",
+  props: [
+    "selectedRoomType"
+  ],
   data () {
     return {
       min: 0,
@@ -62,7 +65,7 @@ export default {
     async fetchData() {
 
 
-      var reqUrl2 = 'http://127.0.0.1:5000/airbnbs'
+      var reqUrl2 = 'http://127.0.0.1:5000/airbnbs?room_type='+ this.$props.selectedRoomType
       console.log("ReqURL " + reqUrl2)
       // await response and data
       const response2 = await fetch(reqUrl2)

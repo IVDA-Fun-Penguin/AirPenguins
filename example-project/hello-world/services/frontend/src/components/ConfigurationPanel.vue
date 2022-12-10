@@ -23,15 +23,21 @@
 
             <v-col md="3" class="slider">
               Price:
-              <RangeSliderPrice @messageFromPrice="captureMyPrice"/>
+              <RangeSliderPrice @messageFromPrice="captureMyPrice"
+                                :selectedRoomType="categories.selectedValue"
+                                :key="sliderID"/>
             </v-col>
             <v-col md="3" class="slider">
               Review:
-              <RangeSliderReview @messageFromReview="captureMyReview"/>
+              <RangeSliderReview @messageFromReview="captureMyReview"
+                                 :selectedRoomType="categories.selectedValue"
+                                 :key="sliderID"/>
             </v-col>
             <v-col md="3" class="slider">
               Min Nights:
-              <RangeSliderNight @messageFromNight="captureMyNight"/>
+              <RangeSliderNight @messageFromNight="captureMyNight"
+                                :selectedRoomType="categories.selectedValue"
+                                :key="sliderID"/>
             </v-col>
 
           </v-row>
@@ -52,7 +58,7 @@
               <v-col cols="12" sm="12">
                 <v-select
                     :items="categories.values"
-                    label="Select a type of attraction"
+                    label="Select a type of room"
                     dense
                     v-model="categories.selectedValue"
                     @change="changeCategory"
@@ -70,7 +76,7 @@
         </v-col>
         <v-col cols="12" md="6" class="sideBar">
           <LinePlot :key="linePlotId"
-                    :selectedCategory="categories.selectedValue"
+                    :selectedRoomType="categories.selectedValue"
                     :selectedBudget="budget.selectedValue"
                     :selected="selected"
                     :priceRange="priceRange"
@@ -82,8 +88,8 @@
         <v-col cols="12" md="4" class="sideBar">
           <v-col cols="12" sm="12" class="scatter">
             <ScatterPlot :key="scatterPlotId"
-                         :selectedCategory="categories.selectedValue"
                          :selectedBudget="budget.selectedValue"
+                         :selectedRoomType="categories.selectedValue"
             />
           </v-col>
         </v-col>
@@ -106,26 +112,17 @@ export default {
   data: () => ({
     scatterPlotId: 0,
     linePlotId: 0,
+    sliderID:0,
     selected: [],
     priceRange:[0,1430],
     reviewRange:[0,930],
     nightRange:[0,360],
     categories: {
       values: ['All',
-        'ArtGallery',
-        'BodyOfWater',
-        'Church',
-        'CivicStructure',
-        'MovieTheater',
-        'Museum',
-        'Park',
-        'PerformingArtsTheater',
-        'ShoppingCenter',
-        'SportsActivityLocation',
-        'TouristAttraction',
-        'Zoo',
-        'None'],
-      selectedValue: 'None'
+        'Entire home/apt',
+        'Private room',
+        'Shared room'],
+      selectedValue: 'All'
     },
     budget: {
       values: [
@@ -146,25 +143,30 @@ export default {
     changeCategory() {
       this.scatterPlotId += 1
       this.linePlotId += 1
+      this.sliderID+=1
     },
     captureMyMessage(msg){
       this.selected=msg
-      this.changeCategory()
+      this.scatterPlotId += 1
+      this.linePlotId += 1
       console.log(msg)
     },
     captureMyPrice(msg){
       this.priceRange=msg
-      this.changeCategory()
+      this.scatterPlotId += 1
+      this.linePlotId += 1
       console.log(msg)
     },
     captureMyReview(msg){
       this.reviewRange=msg
-      this.changeCategory()
+      this.scatterPlotId += 1
+      this.linePlotId += 1
       console.log(msg)
     },
     captureMyNight(msg){
       this.nightRange=msg
-      this.changeCategory()
+      this.scatterPlotId += 1
+      this.linePlotId += 1
       console.log(msg)
     }
   }

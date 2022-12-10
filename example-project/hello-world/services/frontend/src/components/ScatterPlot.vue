@@ -56,7 +56,8 @@ export default {
   name: "ScatterPlot",
   props: [
     "selectedCategory",
-      "selectedBudget"
+      "selectedBudget",
+    "selectedRoomType"
   ],
   data: () => ({
     ScatterPlotData: {x: [], y: [], price: [], number_of_reviews: [], name: []}
@@ -67,7 +68,7 @@ export default {
   methods: {
     async fetchData() {
       // req URL to retrieve companies from backend
-      var reqUrl = 'http://127.0.0.1:5000/airbnbs'
+      var reqUrl = 'http://127.0.0.1:5000/airbnbs?room_type='+ this.$props.selectedRoomType
       console.log('ReqURL ' + reqUrl)
       // await response and data
       const response = await fetch(reqUrl)

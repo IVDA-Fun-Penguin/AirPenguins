@@ -12,7 +12,7 @@ import Plotly from 'plotly.js/dist/plotly';
 export default {
   name: "LinePlot",
   props: [
-    "selectedCategory",
+    "selectedRoomType",
     "selectedBudget",
     "selected",
     "priceRange",
@@ -30,7 +30,7 @@ export default {
   methods: {
     async fetchData() {
       // req URL to retrieve single company from backend
-      var reqUrl = 'http://127.0.0.1:5000/attractions?type='+ this.$props.selectedCategory
+      var reqUrl = 'http://127.0.0.1:5000/attractions'
       console.log("ReqURL " + reqUrl)
       // await response and data
       const response = await fetch(reqUrl)
@@ -46,7 +46,7 @@ export default {
       const tempRangePrice = this.$props.priceRange
       const tempRangeReview = this.$props.reviewRange
       const tempRangeNight = this.$props.nightRange
-      var reqUrl2 = 'http://127.0.0.1:5000/airbnbs'
+      var reqUrl2 = 'http://127.0.0.1:5000/airbnbs?room_type='+ this.$props.selectedRoomType
       console.log("ReqURL " + reqUrl2)
       // await response and data
       const response2 = await fetch(reqUrl2)
@@ -245,7 +245,13 @@ export default {
 
       const filter = 10
       const temp = [...result]
-      const flag = temp.sort(this.compareNumbers)[filter]
+      let flag = 0
+      if(filter<=result.length){
+         flag = temp.sort(this.compareNumbers)[filter]
+      }
+      else{
+         flag = temp.sort(this.compareNumbers).at(-1)
+      }
 
       let t = result
       this.AirbnbData.rank = this.rankings(t)
