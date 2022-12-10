@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="height: 40vh">
+    <div class="scatterPanel">
       <div id="myScatterPlot" style="height: inherit" class="ma-4"></div>
     </div>
   </div>
@@ -19,6 +19,7 @@ export default {
       number_of_reviews: [],
       name: [],
     },
+    LassoedAirbnbs: { x: [], y: [] },
   }),
   mounted() {
     this.fetchData();
@@ -57,7 +58,7 @@ export default {
       let airrew = [];
       const maxPrice = this.$props.selectedBudget;
 
-      const aircost = this.ScatterPlotData.price.filter(function (cost, i) {
+      const priceInCost = this.ScatterPlotData.price.filter(function (cost, i) {
         if (cost <= maxPrice) {
           airX.push(airXTemp[i]);
           airY.push(airYTemp[i]);
@@ -68,47 +69,58 @@ export default {
       });
 
       var trace = {
-        y: aircost,
+        y: priceInCost,
         x: this.calulateDistance(airX, airY),
         mode: "markers",
         type: "scatter",
         text: airname,
         marker: {
-          size: 12,
+          size: 8,
         },
       };
       var data = [trace];
       var layout = {
         margin: { r: 0, t: 0, b: 0, l: 0 },
         xaxis: {
-          title: "price",
-          titlefont: {
-            size: 12,
-            color: "grey",
-          },
-        },
-        yaxis: {
           title: "distance",
           titlefont: {
             size: 12,
             color: "grey",
           },
         },
+        yaxis: {
+          title: "price",
+          titlefont: {
+            size: 12,
+            color: "grey",
+          },
+        },
       };
-      var config = { responsive: true, displayModeBar: false };
+      var config = {
+        responsive: false,
+        displayModeBar: true,
+      };
       Plotly.newPlot("myScatterPlot", data, layout, config);
-
+      /*
       myPlot.on("plotly_click", function (data) {
-        var pts = "";
+        var alertMsg = "";
         for (var i = 0; i < data.points.length; i++) {
-          pts =
-            "x = " +
-            data.points[i].x +
-            "\ny = " +
-            data.points[i].y.toPrecision(4) +
+          alertMsg =
+            "Distance to center is " +
+            data.points[i].x.toPrecision(4) +
+            "\nPrice is $" +
+            data.points[i].y +
             "\n\n";
         }
-        alert("Closest point clicked:\n\n" + pts);
+        alert("Closest Airbnb clicked:\n\n" + alertMsg);
+      });
+      */
+
+      myPlot.on("plotly_selected", function (eventData) {
+        eventData.points.map(function (pt) {
+          console.log(pt.x);
+          this.saveLassoAirbnbs(pt.x, pt.y);
+        });
       });
     },
     calulateDistance(x, y) {
@@ -124,6 +136,22 @@ export default {
       });
       return result;
     },
+    saveLassoAirbnbs(x, y) {
+      this.LassoedAirbnbs.x.push(x);
+      this.LassoedAirbnbs.y.push(y);
+      console.log(this.LassoedAirbnbs.x);
+    },
+    passLassoAirbnbs() {
+      this.$emit("passLasso", this.LassoedAirbnbs);
+    },
   },
 };
 </script>
+<style scoped>
+.scatterPanel {
+  height: 40vh;
+  width: 80vh;
+  border-color: brown;
+  background-color: aqua;
+}
+</style>

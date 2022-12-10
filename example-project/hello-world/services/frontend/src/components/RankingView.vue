@@ -26,6 +26,7 @@ export default {
 <style>
 .rankingPanel {
   width: 90%;
+  height: 40%;
   margin-left: 10px;
   justify-content: center;
 }
