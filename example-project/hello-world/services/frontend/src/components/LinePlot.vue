@@ -10,7 +10,14 @@
 import Plotly from "plotly.js/dist/plotly";
 export default {
   name: "LinePlot",
-  props: ["selectedCategory", "selectedBudget", "selected", "lassoAirbnbs"],
+  props: [
+    "selectedRoomType",
+    "selectedBudget",
+    "selected",
+    "priceRange",
+    "reviewRange",
+    "nightRange","lassoAirbnbs"
+  ],
   data: () => ({
     TopAirbnbNames: [],
     AttractionData: { x: [], y: [], type: [], name: [] },
@@ -23,10 +30,9 @@ export default {
   methods: {
     async fetchData() {
       // req URL to retrieve single company from backend
-      var reqUrl =
-        "http://127.0.0.1:5000/attractions?type=" +
-        this.$props.selectedCategory;
-      console.log("ReqURL " + reqUrl);
+
+      var reqUrl = 'http://127.0.0.1:5000/attractions'
+      console.log("ReqURL " + reqUrl)
       // await response and data
       const response = await fetch(reqUrl);
       const responseData = await response.json();
@@ -38,18 +44,30 @@ export default {
         this.AttractionData.name.push(attr.name);
       });
 
-      var reqUrl2 = "http://127.0.0.1:5000/airbnbs";
-      console.log("ReqURL " + reqUrl2);
+
+      const tempRangePrice = this.$props.priceRange
+      const tempRangeReview = this.$props.reviewRange
+      const tempRangeNight = this.$props.nightRange
+      var reqUrl2 = 'http://127.0.0.1:5000/airbnbs?room_type='+ this.$props.selectedRoomType
+      console.log("ReqURL " + reqUrl2)
       // await response and data
       const response2 = await fetch(reqUrl2);
       const responseData2 = await response2.json();
       // transform data to usable by lineplot
       responseData2.forEach((attr) => {
-        this.AirbnbData.x.push(attr.longitude);
-        this.AirbnbData.y.push(attr.latitude);
-        this.AirbnbData.name.push(attr.name);
-        this.AirbnbData.cost.push(attr.price);
-      });
+
+        if(attr.minimum_nights>=tempRangeNight[0] && attr.minimum_nights<=tempRangeNight[1]){
+          if(attr.number_of_reviews>=tempRangeReview[0] && attr.number_of_reviews<=tempRangeReview[1]){
+            if(attr.price>=tempRangePrice[0] && attr.price<=tempRangePrice[1]){
+              this.AirbnbData.x.push(attr.longitude)
+              this.AirbnbData.y.push(attr.latitude)
+              this.AirbnbData.name.push(attr.name)
+              this.AirbnbData.cost.push(attr.price)
+            }
+          }
+      }
+      })
+
       // draw the lineplot after the data is transformed
       this.calculateMiddlePoint();
       this.drawLinePlot();
@@ -233,15 +251,20 @@ export default {
 
       const filter = 10;
       const temp = [...result];
-      const distNotSorted = [...result];
-      const flag = temp.sort(this.compareNumbers)[filter];
+      let flag = 0
+      if(filter<=result.length){
+        flag = temp.sort(this.compareNumbers)[filter]
+      }
+      else{
+        flag = temp.sort(this.compareNumbers).at(-1)
+      }
 
-      let t = [...result];
+      let t = result
       this.AirbnbData.rank = this.rankings(t);
+      const distNotSorted = [...result];
 
-      result = result.map(function (x) {
-        return x <= flag ? "#ff0000" : "rgba(114,114,114,0.25)";
-      });
+      result = result.map(function(x){return x<=flag ? "#ff0000" : "rgba(114,114,114,0.25)" })
+
 
       let color = [...result];
 

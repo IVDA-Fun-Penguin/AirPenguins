@@ -10,7 +10,7 @@
 import Plotly from "plotly.js/dist/plotly";
 export default {
   name: "ScatterPlot",
-  props: ["selectedCategory", "selectedBudget", "midPoint"],
+  props: ["selectedCategory", "selectedBudget", "midPoint","selectedRoomType"],
   data: () => ({
     ScatterPlotData: {
       x: [],
@@ -28,8 +28,8 @@ export default {
   methods: {
     async fetchData() {
       // req URL to retrieve companies from backend
-      var reqUrl = "http://127.0.0.1:5000/airbnbs";
-      console.log("ReqURL " + reqUrl);
+      var reqUrl = 'http://127.0.0.1:5000/airbnbs?room_type='+ this.$props.selectedRoomType
+      console.log('ReqURL ' + reqUrl)
       // await response and data
       const response = await fetch(reqUrl);
       const responseData = await response.json();

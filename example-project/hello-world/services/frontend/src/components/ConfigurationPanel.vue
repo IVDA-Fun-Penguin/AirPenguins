@@ -1,5 +1,60 @@
 <template>
   <div>
+    <div>
+      <v-card>
+        <v-container fluid>
+
+          <v-row align="center">
+
+            <v-col md="2">
+              <v-row>
+                <v-col md="12">
+                  <v-row align="center">
+                    <!--<v-col><img src="../assets/pengu.png" style="height: 100px"></v-col>-->
+                    <v-col>
+                      <h1>AirPenguins</h1>
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+            </v-col>
+
+
+
+            <v-col  md="3" class="slider">
+              Price:
+              <RangeSliderPrice @messageFromPrice="captureMyPrice"
+                                :selectedRoomType="categories.selectedValue"
+                                :key="sliderID"/>
+            </v-col>
+            <v-col md="3" class="slider">
+              Review:
+              <RangeSliderReview @messageFromReview="captureMyReview"
+                                 :selectedRoomType="categories.selectedValue"
+                                 :key="sliderID"/>
+            </v-col>
+            <v-col md="3" class="slider">
+              Min Nights:
+              <RangeSliderNight @messageFromNight="captureMyNight"
+                                :selectedRoomType="categories.selectedValue"
+                                :key="sliderID"/>
+            </v-col>
+
+            <v-col md="1" >
+              <v-select
+                  :items="categories.values"
+                  label="Select a type of room"
+                  dense
+                  v-model="categories.selectedValue"
+                  @change="changeCategory"
+              ></v-select>
+            </v-col>
+
+          </v-row>
+
+        </v-container>
+      </v-card>
+    </div>
     <v-container fluid>
       <v-row>
         <v-col cols="12" md="2" class="sideBar">
@@ -9,39 +64,24 @@
                 <div class="control-panel-font">Attraction Overview</div>
               </v-col>
             </v-row>
-            <v-row>
-              <v-col cols="12" sm="12">
-                <v-select
-                  :items="categories.values"
-                  label="Select a type of attraction"
-                  dense
-                  v-model="categories.selectedValue"
-                  @change="changeCategory"
-                ></v-select>
-              </v-col>
-            </v-row>
 
             <v-row>
               <v-col cols="12" sm="12">
-                <Multiselect @messageFromChild="captureMyMessage" />
+                <Multiselect @messageFromChild="captureMyMessage"/>
               </v-col>
             </v-row>
 
-            <v-row>
-              <v-col cols="12" sm="12">
-                <!--
-                <HistogramSlider/>
-                -->
-              </v-col>
-            </v-row>
           </v-card>
         </v-col>
         <v-col cols="12" md="6" class="sideBar">
           <LinePlot
             :key="linePlotId"
-            :selectedCategory="categories.selectedValue"
+            :selectedRoomType="categories.selectedValue"
             :selectedBudget="budget.selectedValue"
             :selected="selected"
+            :priceRange="priceRange"
+            :reviewRange="reviewRange"
+            :nightRange="nightRange"
             :lassoAirbnbs="lassoAirbnbs"
             @passTopNames="setTopNames($event)"
             @passMidPoint="setMidPoint"
@@ -56,8 +96,8 @@
             <v-row>
               <ScatterPlot
                 :key="scatterPlotId"
-                :selectedCategory="categories.selectedValue"
                 :selectedBudget="budget.selectedValue"
+                :selectedRoomType="categories.selectedValue"
                 :midPoint="MiddlePoint"
                 @passLasso="setLassoAirbnbs"
               />
@@ -74,40 +114,44 @@ import ScatterPlot from "./ScatterPlot";
 import LinePlot from "./LinePlot";
 import Multiselect from "./Multiselect";
 import RankingView from "./RankingView.vue";
-//import HistogramSlider from './HistogramSlider';
+import RangeSliderPrice from './RangeSliderPrice';
+import RangeSliderReview from './RangeSliderReview';
+import RangeSliderNight from './RangeSliderNight';
 
 export default {
-  components: { LinePlot, ScatterPlot, Multiselect, RankingView },
+  components: { LinePlot, ScatterPlot, Multiselect, RankingView,RangeSliderPrice,RangeSliderReview, RangeSliderNight },
   data: () => ({
     rankingViewId: 0,
     scatterPlotId: 0,
     linePlotId: 0,
+    sliderID:0,
     selected: [],
     topAirbnbNames: [],
     lassoAirbnbs: { x: [], y: [] },
     MiddlePoint: { x: 0, y: 0 },
+    priceRange:[0,1430],
+    reviewRange:[0,930],
+    nightRange:[0,360],
     categories: {
-      values: [
-        "All",
-        "ArtGallery",
-        "BodyOfWater",
-        "Church",
-        "CivicStructure",
-        "MovieTheater",
-        "Museum",
-        "Park",
-        "PerformingArtsTheater",
-        "ShoppingCenter",
-        "SportsActivityLocation",
-        "TouristAttraction",
-        "Zoo",
-        "None",
-      ],
-      selectedValue: "None",
+      values: ['All',
+        'Entire home/apt',
+        'Private room',
+        'Shared room'],
+      selectedValue: 'All'
     },
     budget: {
-      values: [25, 50, 75, 100, 250, 500, 750, 1000, 1500],
-      selectedValue: 1500,
+      values: [
+        25,
+        50,
+        75,
+        100,
+        250,
+        500,
+        750,
+        1000,
+        1500
+      ],
+      selectedValue: 1500
     },
   }),
   methods: {
@@ -134,14 +178,34 @@ export default {
       this.scatterPlotId += 1;
       this.linePlotId += 1;
       this.rankingViewId += 1;
+      this.sliderID+=1
     },
-    captureMyMessage(msg) {
-      this.selected = msg;
-      this.linePlotId += 1;
-      //console.log(msg);
+    captureMyMessage(msg){
+      this.selected=msg
+      this.scatterPlotId += 1
+      this.linePlotId += 1
+      console.log(msg)
     },
-  },
-};
+    captureMyPrice(msg){
+      this.priceRange=msg
+      this.scatterPlotId += 1
+      this.linePlotId += 1
+      console.log(msg)
+    },
+    captureMyReview(msg){
+      this.reviewRange=msg
+      this.scatterPlotId += 1
+      this.linePlotId += 1
+      console.log(msg)
+    },
+    captureMyNight(msg){
+      this.nightRange=msg
+      this.scatterPlotId += 1
+      this.linePlotId += 1
+      console.log(msg)
+    }
+  }
+}
 </script>
 
 <style scoped>
