@@ -10,7 +10,7 @@
 import Plotly from "plotly.js/dist/plotly";
 export default {
   name: "LinePlot",
-  props: ["selectedCategory", "selectedBudget", "selected"],
+  props: ["selectedCategory", "selectedBudget", "selected", "lassoAirbnbs"],
   data: () => ({
     TopAirbnbNames: [],
     AttractionData: { x: [], y: [], type: [], name: [] },
@@ -240,9 +240,21 @@ export default {
         return x <= flag ? "#ff0000" : "rgba(114,114,114,0.25)";
       });
 
-      this.AirbnbData.color = result;
+      let color = [...result];
 
-      return result;
+      const Lassoedx = this.$props.lassoAirbnbs.x;
+      const Lassoedy = this.$props.lassoAirbnbs.y;
+
+      AirbnbLat.forEach(function (_, i) {
+        if (AirbnbLat[i] in Lassoedx && AirbnbLong[i] in Lassoedy) {
+          console.log(AirbnbLat[i], AirbnbLong[i], "changed color");
+          color[i] = "rgba(20,205,200,1)";
+        }
+      });
+
+      this.AirbnbData.color = color;
+
+      return color;
     },
 
     passTopAirbnbs() {

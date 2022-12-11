@@ -42,6 +42,7 @@
             :selectedCategory="categories.selectedValue"
             :selectedBudget="budget.selectedValue"
             :selected="selected"
+            :lassoAirbnbs="lassoAirbnbs"
             @passTopNames="setTopNames($event)"
           />
         </v-col>
@@ -56,6 +57,7 @@
                 :key="scatterPlotId"
                 :selectedCategory="categories.selectedValue"
                 :selectedBudget="budget.selectedValue"
+                @passLasso="setLassoAirbnbs($events)"
               />
             </v-row>
           </v-col>
@@ -80,6 +82,7 @@ export default {
     linePlotId: 0,
     selected: [],
     topAirbnbNames: [],
+    lassoAirbnbs: { x: [47.37532], y: [8.53838] },
     categories: {
       values: [
         "All",
@@ -107,8 +110,15 @@ export default {
   methods: {
     setTopNames(topAirbnbs) {
       this.topAirbnbNames = topAirbnbs;
-      console.log("nextline is passed data");
+      console.log("nextline is name data");
       console.log(this.topAirbnbNames);
+    },
+    setLassoAirbnbs(lassoAirbnbs) {
+      this.lassoAirbnbs.x = lassoAirbnbs.x;
+      this.lassoAirbnbs.y = lassoAirbnbs.y;
+      console.log("nextline is lasso data");
+      console.log(this.lassoAirbnbs.x);
+      console.log(this.lassoAirbnbs.x);
     },
     changeCategory() {
       this.scatterPlotId += 1;

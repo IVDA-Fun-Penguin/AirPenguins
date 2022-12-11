@@ -101,7 +101,7 @@ export default {
         displayModeBar: true,
       };
       Plotly.newPlot("myScatterPlot", data, layout, config);
-      /*
+
       myPlot.on("plotly_click", function (data) {
         var alertMsg = "";
         for (var i = 0; i < data.points.length; i++) {
@@ -114,15 +114,26 @@ export default {
         }
         alert("Closest Airbnb clicked:\n\n" + alertMsg);
       });
-      */
+      var lassox = [];
+      var lassoy = [];
 
-      myPlot.on("plotly_selected", function (eventData) {
-        eventData.points.map(function (pt) {
-          console.log(pt.x);
-          this.saveLassoAirbnbs(pt.x, pt.y);
-        });
+      myPlot.on("plotly_selected", (eventData) => {
+        if (eventData.points) {
+          eventData.points.forEach(function (pt) {
+            lassox.push(pt.x);
+            lassoy.push(pt.y);
+          });
+        } else {
+          console.log("point not found");
+        }
+        this.LassoedAirbnbs.x = lassox;
+        this.LassoedAirbnbs.y = lassoy;
+        console.log("this.lassox,from child", this.LassoedAirbnbs.x);
+        console.log("this.lassoy,from child", this.LassoedAirbnbs.y);
+        this.passLassoAirbnbs();
       });
     },
+
     calulateDistance(x, y) {
       let result = [];
 
@@ -136,11 +147,7 @@ export default {
       });
       return result;
     },
-    saveLassoAirbnbs(x, y) {
-      this.LassoedAirbnbs.x.push(x);
-      this.LassoedAirbnbs.y.push(y);
-      console.log(this.LassoedAirbnbs.x);
-    },
+
     passLassoAirbnbs() {
       this.$emit("passLasso", this.LassoedAirbnbs);
     },
