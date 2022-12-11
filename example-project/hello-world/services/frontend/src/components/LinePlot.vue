@@ -103,6 +103,7 @@ export default {
       }
 
       //console.log(this.$props.selected);
+      this.passMidPoint();
     },
     drawLinePlot() {
       let traces = [];
@@ -219,6 +220,7 @@ export default {
 
       const tempX = this.MiddlePoint.x;
       const tempY = this.MiddlePoint.y;
+      console.log("Midpoint 11111111111", tempX, tempY);
 
       AirbnbLat.forEach(function (_, i) {
         result.push(
@@ -231,6 +233,7 @@ export default {
 
       const filter = 10;
       const temp = [...result];
+      const distNotSorted = [...result];
       const flag = temp.sort(this.compareNumbers)[filter];
 
       let t = [...result];
@@ -243,11 +246,11 @@ export default {
       let color = [...result];
 
       const Lassoedx = this.$props.lassoAirbnbs.x;
-      const Lassoedy = this.$props.lassoAirbnbs.y;
+      console.log(Lassoedx, temp);
 
-      AirbnbLat.forEach(function (_, i) {
-        if (AirbnbLat[i] in Lassoedx && AirbnbLong[i] in Lassoedy) {
-          console.log(AirbnbLat[i], AirbnbLong[i], "changed color");
+      distNotSorted.forEach(function (_, i) {
+        if (Lassoedx.includes(temp[i])) {
+          console.log(distNotSorted[i], "changed color");
           color[i] = "rgba(20,205,200,1)";
         }
       });
@@ -255,6 +258,9 @@ export default {
       this.AirbnbData.color = color;
 
       return color;
+    },
+    passMidPoint() {
+      this.$emit("passMidPoint", this.MiddlePoint);
     },
 
     passTopAirbnbs() {

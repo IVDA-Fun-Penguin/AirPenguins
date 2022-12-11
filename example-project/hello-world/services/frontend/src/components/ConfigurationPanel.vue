@@ -44,6 +44,7 @@
             :selected="selected"
             :lassoAirbnbs="lassoAirbnbs"
             @passTopNames="setTopNames($event)"
+            @passMidPoint="setMidPoint"
           />
         </v-col>
 
@@ -57,7 +58,8 @@
                 :key="scatterPlotId"
                 :selectedCategory="categories.selectedValue"
                 :selectedBudget="budget.selectedValue"
-                @passLasso="setLassoAirbnbs($events)"
+                :midPoint="MiddlePoint"
+                @passLasso="setLassoAirbnbs"
               />
             </v-row>
           </v-col>
@@ -82,7 +84,8 @@ export default {
     linePlotId: 0,
     selected: [],
     topAirbnbNames: [],
-    lassoAirbnbs: { x: [47.37532], y: [8.53838] },
+    lassoAirbnbs: { x: [], y: [] },
+    MiddlePoint: { x: 0, y: 0 },
     categories: {
       values: [
         "All",
@@ -108,17 +111,24 @@ export default {
     },
   }),
   methods: {
+    setMidPoint(midPoint) {
+      console.log("mnidpointfrom child33333333333", midPoint);
+      this.MiddlePoint = midPoint;
+      this.scatterPlotId += 1;
+    },
     setTopNames(topAirbnbs) {
       this.topAirbnbNames = topAirbnbs;
       console.log("nextline is name data");
       console.log(this.topAirbnbNames);
     },
-    setLassoAirbnbs(lassoAirbnbs) {
-      this.lassoAirbnbs.x = lassoAirbnbs.x;
-      this.lassoAirbnbs.y = lassoAirbnbs.y;
-      console.log("nextline is lasso data");
-      console.log(this.lassoAirbnbs.x);
-      console.log(this.lassoAirbnbs.x);
+    setLassoAirbnbs(childlassoAirbnbs) {
+      if (childlassoAirbnbs) {
+        this.lassoAirbnbs.x = childlassoAirbnbs.x;
+        this.lassoAirbnbs.y = childlassoAirbnbs.y;
+      } else {
+        console.log("lassoAirbnbs not found");
+      }
+      this.linePlotId += 1;
     },
     changeCategory() {
       this.scatterPlotId += 1;

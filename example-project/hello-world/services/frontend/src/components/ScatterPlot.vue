@@ -10,7 +10,7 @@
 import Plotly from "plotly.js/dist/plotly";
 export default {
   name: "ScatterPlot",
-  props: ["selectedCategory", "selectedBudget"],
+  props: ["selectedCategory", "selectedBudget", "midPoint"],
   data: () => ({
     ScatterPlotData: {
       x: [],
@@ -20,6 +20,7 @@ export default {
       name: [],
     },
     LassoedAirbnbs: { x: [], y: [] },
+    MiddlePoint: { x: 0, y: 0 },
   }),
   mounted() {
     this.fetchData();
@@ -114,10 +115,10 @@ export default {
         }
         alert("Closest Airbnb clicked:\n\n" + alertMsg);
       });
-      var lassox = [];
-      var lassoy = [];
 
       myPlot.on("plotly_selected", (eventData) => {
+        var lassox = [];
+        var lassoy = [];
         if (eventData.points) {
           eventData.points.forEach(function (pt) {
             lassox.push(pt.x);
@@ -128,21 +129,22 @@ export default {
         }
         this.LassoedAirbnbs.x = lassox;
         this.LassoedAirbnbs.y = lassoy;
-        console.log("this.lassox,from child", this.LassoedAirbnbs.x);
-        console.log("this.lassoy,from child", this.LassoedAirbnbs.y);
         this.passLassoAirbnbs();
       });
     },
 
     calulateDistance(x, y) {
       let result = [];
+      this.MiddlePoint.x = this.$props.midPoint.x;
+      this.MiddlePoint.y = this.$props.midPoint.y;
+
+      const tempX = this.MiddlePoint.x;
+      const tempY = this.MiddlePoint.y;
+      console.log("Midpoint 222222222", tempX, tempY);
 
       x.forEach(function (x, i) {
         result.push(
-          Math.sqrt(
-            Math.pow(x - 8.536477780554755, 2) +
-              Math.pow(y[i] - 47.374806473560426, 2)
-          )
+          Math.sqrt(Math.pow(x - tempX, 2) + Math.pow(y[i] - tempY, 2))
         );
       });
       return result;
@@ -157,8 +159,6 @@ export default {
 <style scoped>
 .scatterPanel {
   height: 40vh;
-  width: 80vh;
-  border-color: brown;
-  background-color: aqua;
+  width: 30rem;
 }
 </style>
