@@ -10,7 +10,7 @@
               <v-row>
                 <v-col md="12">
                   <v-row align="center">
-                    <v-col><img src="../assets/pengu.png" style="height: 100px"></v-col>
+                    <!--<v-col><img src="../assets/pengu.png" style="height: 100px"></v-col>-->
                     <v-col>
                       <h1>AirPenguins</h1>
                     </v-col>
@@ -21,7 +21,7 @@
 
 
 
-            <v-col md="3" class="slider">
+            <v-col  md="3" class="slider">
               Price:
               <RangeSliderPrice @messageFromPrice="captureMyPrice"
                                 :selectedRoomType="categories.selectedValue"
@@ -40,6 +40,16 @@
                                 :key="sliderID"/>
             </v-col>
 
+            <v-col md="1" >
+              <v-select
+                  :items="categories.values"
+                  label="Select a type of room"
+                  dense
+                  v-model="categories.selectedValue"
+                  @change="changeCategory"
+              ></v-select>
+            </v-col>
+
           </v-row>
 
         </v-container>
@@ -52,17 +62,6 @@
             <v-row>
               <v-col cols="12" sm="12">
                 <div class="control-panel-font">Attraction Overview</div>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="12" sm="12">
-                <v-select
-                    :items="categories.values"
-                    label="Select a type of room"
-                    dense
-                    v-model="categories.selectedValue"
-                    @change="changeCategory"
-                ></v-select>
               </v-col>
             </v-row>
 
